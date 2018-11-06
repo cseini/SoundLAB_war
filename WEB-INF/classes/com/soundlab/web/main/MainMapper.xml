@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soundlab.web.main.MainMapper">
+	  <select id="getHash" resultType="int">
+	    SELECT COUNT(*) 
+	    FROM VIEW_RECORD 
+	    WHERE sg_element LIKE 'hash' 
+	    GROUP BY SEQ_GROUP 
+	    ORDER BY SEQ_GROUP;
+	  </select>
+	  <select id="getChart" parameterType="map" resultType="map">
+		SELECT 
+			RANK() OVER (PARTITION BY V.SG_ELEMENT ORDER BY COUNT(*) DESC) RANK, 
+			V.SEQ_GROUP MUSIC_SEQ ,M.GENRE_SEQ 장르 ,COUNT(*) 스트리밍, M.MUSIC_TITLE 타이틀,M.ARTIST_SEQ ARTIST_SEQ, 
+			(SELECT ARTIST_NAME FROM ARTIST WHERE ARTIST_SEQ LIKE M.ARTIST_SEQ) 가수, 
+			M.ALBUM_SEQ ALBUM_SEQ, (SELECT ALBUM_TITLE FROM ALBUM WHERE ALBUM_SEQ LIKE M.ALBUM_SEQ) 앨범, 
+			(SELECT CONCAT(IMG_NAME,'.',EXT) FROM IMG WHERE SEQ LIKE ALBUM_SEQ) IMG_NAME, 
+			CASE WHEN V.SEQ_GROUP LIKE (SELECT SEQ_GROUP FROM UPDOWN WHERE MEMBER_ID LIKE #{memberId} AND SEQ_GROUP LIKE V.SEQ_GROUP AND TYPES LIKE 'd' GROUP BY UD_SEQ DESC LIMIT 1) 
+			THEN 'd' 
+			WHEN V.SEQ_GROUP LIKE (SELECT SEQ_GROUP FROM UPDOWN WHERE MEMBER_ID LIKE #{memberId} AND SEQ_GROUP LIKE V.SEQ_GROUP AND TYPES LIKE 'u' GROUP BY UD_SEQ DESC LIMIT 1) 
+			THEN 'u' 
+			ELSE 'n' 
+			END AS 업다운 
+		FROM VIEW_RECORD V 
+		LEFT JOIN MUSIC M ON V.SEQ_GROUP = M.MUSIC_SEQ 
+		WHERE 
+			V.SG_ELEMENT LIKE 'music' 
+			AND V.VIEW_DATE LIKE CONCAT(#{date},'%') 
+		GROUP BY V.SEQ_GROUP 
+		ORDER BY COUNT(*) DESC, M.MUSIC_SEQ DESC LIMIT 5;
+	  </select>
+</mapper>

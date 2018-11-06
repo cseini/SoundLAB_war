@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soundlab.web.detail.DetailMapper">
+	<select id="getAlbum" resultType="map" parameterType="string">
+		  SELECT
+			     A.ALBUM_SEQ 'ALBUMSEQ',
+				 A.ALBUM_TYPE 'ALBUMTYPE',
+				 A.ALBUM_TITLE 'ALBUMTITLE',
+				 A.ARTIST_NAME 'ARTISTNAME',
+				 A.RELEASE_DATE 'RELEASEDATE',
+				 A.ALBUM_GENRE 'ALBUMGENRE',
+				 A.INTRO,
+				 I.IMG_NAME IMGNAME, 
+				 I.EXT
+			FROM ALBUM AS A
+				 JOIN IMG AS I
+				 ON A.ALBUM_SEQ = I.SEQ
+			WHERE A.ALBUM_SEQ LIKE #{albumSeq};
+	</select>
+	
+	 <select id="getAlbumMusic" resultType="map" parameterType="map">
+				<if test="#{id} == null">
+				SELECT 
+					M.MUSIC_SEQ,
+					M.MUSIC_TITLE,
+					M.GENRE_SEQ,
+					A.ARTIST_NAME,
+					A.ALBUM_SEQ
+				FROM MUSIC AS M
+					JOIN ALBUM AS A
+					ON M.ALBUM_SEQ = A.ALBUM_SEQ
+				WHERE M.ALBUM_SEQ LIKE #{albumSeq}
+				</if>
+				<if test="#{id} != null">
+				SELECT 
+					M.MUSIC_SEQ,
+					M.MUSIC_TITLE,
+					M.GENRE_SEQ,
+					A.ARTIST_NAME,
+					A.ALBUM_SEQ,
+					U.TYPES,
+					U.SG_ELEMENT
+				FROM MUSIC AS M
+					LEFT JOIN (SELECT
+					*
+					FROM(
+					SELECT
+					MAX(UD_SEQ) MAX_SEQ
+					FROM UPDOWN UD
+					WHERE MEMBER_ID LIKE #{id}
+					GROUP BY UD.SEQ_GROUP
+					ORDER BY UD_SEQ DESC
+					)A
+					JOIN(SELECT * FROM UPDOWN U) B
+					ON A.MAX_SEQ LIKE B.UD_SEQ
+					ORDER BY B.SEQ_GROUP) U
+					ON M.MUSIC_SEQ = U.SEQ_GROUP
+					LEFT JOIN ALBUM AS A
+					ON M.ALBUM_SEQ = A.ALBUM_SEQ
+				WHERE M.ALBUM_SEQ LIKE #{albumSeq};
+				
+				
+				</if>
+	</select>
+	<select id="count" resultType="int">
+		SELECT COUNT(*) 
+			FROM ALBUM AS A
+				JOIN COMMENT AS C
+				ON A.ALBUM_SEQ =  C.SEQ_GROUP
+	 WHERE ALBUM_SEQ LIKE #{albumSeq};
+
+	
+	</select>
+	
+	<!-- 댓글 -->
+	
+	 <insert id="create">
+		INSERT INTO COMMENT
+		(MEMBER_ID, SEQ_GROUP, MSG)
+		VALUES
+		(#{memberId},#{seqGroup},#{msg})
+	</insert>
+	
+	<select id="countMy" resultType="int">
+	SELECT COUNT(*) FROM COMMENT WHERE SEQ_GROUP LIKE #{seqGroup};
+	
+	</select>
+	
+	
+	<select id="getMy" resultType="map">
+			SELECT 
+			
+			T.*
+		FROM
+		(
+		   SELECT  CAST(@ROWNUM := @ROWNUM + 1 AS SIGNED INTEGER) AS BNO,
+		    DATE_FORMAT(REGI_DATE,'%Y-%m-%d %H:%i:%s')AS REGI_DATE,
+		    MEMBER_ID, SEQ_GROUP,MSG,COMMENT_SEQ
+		   FROM
+		       COMMENT, (SELECT @ROWNUM :=0) R
+		       WHERE SEQ_GROUP NOT LIKE '-1' AND SEQ_GROUP LIKE #{seqGroup}
+		   ORDER BY REGI_DATE DESC
+		) T
+		WHERE T.BNO BETWEEN #{beginRow} AND #{endRow};
+	
+	</select>
+	
+	<!-- <select id="list" resultType="map">
+	SELECT *
+       FROM (
+           SELECT
+               ROW_NUMBER() OVER(ORDER BY msg_seq DESC) AS NUM,
+               A.*
+           FROM
+               COMMENT A
+           WHERE SEQ_GROUP like #{seqGroup}
+       )B
+       WHERE B.NUM BETWEEN #{beginRow} AND #{endRow}
+       ORDER BY B.NUM
+	
+	
+	</select> -->
+	
+	<!-- <select id="getAlbumList"  resultType="map" parameterType="string">
+		 SELECT
+		     B.ALBUM_SEQ,
+			 B.ALBUM_TYPE,
+			 B.ALBUM_TITLE,
+			 B.RELEASE_DATE,
+			 I.IMG_NAME, 
+			 I.EXT
+		FROM ALBUM AS B
+			 JOIN IMG AS I
+			 ON B.ALBUM_SEQ = I.SEQ
+		WHERE B.ALBUM_SEQ IN(
+			SELECT M.ALBUM_SEQ
+			FROM MUSIC M
+			WHERE M.ARTIST_SEQ LIKE #{artistSeq}
+		)
+	</select>
+	<select id="getMvList" resultType="map" parameterType="string">
+		SELECT
+		     M.MV_SEQ,
+			 M.MV_TITLE,
+			 M.RELEASE_DATE,
+			 M.MUSIC_SEQ,
+			 M.ytb
+		FROM MV AS M
+		WHERE M.MUSIC_SEQ IN(
+			SELECT MC.MUSIC_SEQ
+			FROM MUSIC MC
+			WHERE MC.ARTIST_SEQ LIKE #{artistSeq}
+			)
+	</select>  -->
+
+</mapper>
+

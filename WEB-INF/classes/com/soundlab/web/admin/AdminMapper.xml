@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soundlab.web.admin.AdminMapper">
+	<resultMap type="map" id="admin">
+		<result property="songSeq" column="SONG_SEQ"/>
+		<result property="musicTitle" column="MUSIC_TITLE"/>
+		<result property="genreSeq" column="GENRE_SEQ"/>
+		<result property="genreName" column="GENRE_NAME"/>				
+		<result property="artSeq" column="ART_SEQ"/>
+		<result property="artistSeq" column="ARTIST_SEQ"/>
+		<result property="artistName" column="ARTIST_NAME"/>
+		<result property="albumSeq" column="ALBUM_SEQ"/>
+		<result property="albumTitle" column="ALBUM_TITLE"/>
+		<result property="age" column="AGE"/>
+		<result property="ageGroup" column="AGE_GROUP"/>
+		<result property="sex" column="SEX"/>
+		<result property="str" column="STR"/>
+		<result property="good" column="GOOD"/>
+		<result property="bad" column="BAD"/>
+		<result property="sumStr" column="SUM_STR"/>
+		<result property="sumGood" column="SUM_GOOD"/>
+		<result property="sumBad" column="SUM_BAD"/>
+		<result property="date" column="DATE"/>
+		<result property="sumVisit" column="SUM_VISIT"/>
+		<result property="mVisit" column="M_SUM_VISIT"/>
+		<result property="fVisit" column="F_SUM_VISIT"/>
+		<result property="newUser" column="NEW_USER"/>
+		<result property="strm" column="STRM"/>
+		<result property="teen" column="10S"/>
+		<result property="twent" column="20S"/>
+		<result property="thir" column="30S"/>
+		<result property="four" column="40S"/>
+		<result property="m" column="M"/>
+		<result property="f" column="F"/>
+		<result property="hashSeq" column="HASH_SEQ"/>
+		<result property="day" column="DAY"/>
+		<result property="hash" column="HASH"/>
+		<result property="countView" column="COUNT_VIEW"/>
+	</resultMap>
+	
+	
+	<!-- 방문자 -->
+	<select id="cntNew" resultType="int">
+	SELECT COUNT(*) FROM MEMBER
+	WHERE DATE(JOIN_DATE) = CURDATE()
+	</select>
+	<select id="countStrm" resultMap="admin">
+	SELECT * FROM NR_DAY_STR
+	WHERE DATE = CURDATE()
+	</select>
+	<select id="cntVisiter" resultMap="admin">
+	SELECT * FROM NR_VISITER 
+	WHERE DATE BETWEEN DATE_ADD(CURDATE(), INTERVAL -6 DAY ) AND CURDATE()
+	</select>
+	
+	
+	<!-- 아티스트 -->
+	<select id="artistStats" resultMap="admin">
+		SELECT * FROM NR_ARTIST_STATS
+		WHERE ARTIST_NAME LIKE #{artistName}
+	</select>
+	<select id="getPerSex" resultMap="admin">
+	SELECT ARTIST_NAME, SUM(M) M, SUM(F) F 
+	FROM NR_ARTIST_MF
+	WHERE ARTIST_NAME LIKE #{artistName}
+	</select>
+	<select id="getCntAge" resultMap="admin">
+	SELECT * FROM NR_ARTI_AGE
+	WHERE ARTIST_NAME LIKE #{artistName}
+	</select>
+	<select id="listTopSong" parameterType="map" resultMap="admin" >
+	SELECT * FROM NR_ARTIST_STATS
+		WHERE ARTIST_NAME LIKE #{artistName}
+		<if test="order == 'sum_good' ">
+		ORDER BY SUM_GOOD DESC LIMIT 5
+		</if>
+		<if test="order == 'sum_bad' ">
+		ORDER BY SUM_BAD DESC LIMIT 5
+		</if>
+	</select>
+	
+	<!-- 선호도 -->
+	<select id="ageGenre" resultMap="admin">
+	SELECT * FROM NR_AGE_GENRE
+	</select>
+	<select id="ageArtist" resultMap="admin">
+	SELECT * FROM NR_AGE_ARTIST
+	</select> 
+	<select id="sexGenre" resultMap="admin">
+	SELECT * FROM NR_SEX_GENRE
+	</select>
+	<select id="sexArtist" resultMap="admin">
+	SELECT * FROM NR_SEX_ARTIST
+	WHERE ARTIST_NAME IN ("방탄소년단","레드벨벳","트와이스")
+	</select>
+	<select id="listTotalSong" parameterType="map" resultMap="admin" >
+	SELECT * FROM NR_ARTIST_STATS
+		<if test="order == 'sum_good' ">
+		ORDER BY SUM_GOOD DESC LIMIT 5
+		</if>
+		<if test="order == 'sum_bad' ">
+		ORDER BY SUM_BAD DESC LIMIT 5
+		</if>
+	</select>
+	
+	
+	<!-- 해시태그 -->
+	<select id="getHash" resultMap="admin">
+	SELECT * FROM NR_HASH 
+	<!-- <![CDATA[WHERE HASH_SEQ BETWEEN #{num}-4 AND #{num}]]> -->
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+

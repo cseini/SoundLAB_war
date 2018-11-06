@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soundlab.web.service.ServiceMapper">
+	<select id="getArtist" resultType="map" parameterType="map">
+	<if test="#{id} ==null">
+		     A.*,
+			 I.IMG_NAME, 
+			 I.EXT
+		FROM ARTIST AS A
+			 LEFT JOIN IMG AS I
+			 ON A.ARTIST_SEQ = I.SEQ
+		WHERE A.ARTIST_NAME LIKE #{artist}
+	</if>
+	<if test="#{id} != nill">
+		SELECT
+		     A.ARTIST_SEQ ,
+			 A.ARTIST_NAME, A.SEX, A.BIRTH, A.DEBUT, A.NATION,
+			 A.GROUP_NAME,
+			 A.INTRO1, A.INTRO2,
+			 I.IMG_NAME, I.EXT,
+			 U.TYPES
+		FROM ARTIST AS A
+		 LEFT JOIN  (SELECT
+				*
+				FROM(
+					SELECT
+					MAX(UD_SEQ) MAX_SEQ
+					FROM UPDOWN UD
+					WHERE MEMBER_ID LIKE #{id}
+					GROUP BY UD.SEQ_GROUP
+					ORDER BY UD_SEQ DESC
+				)A
+				JOIN(SELECT * FROM UPDOWN U) B
+				ON A.MAX_SEQ LIKE B.UD_SEQ
+				ORDER BY B.SEQ_GROUP) U
+		 ON A.ARTIST_SEQ = U.SEQ_GROUP
+		 LEFT JOIN IMG AS I
+		 ON A.ARTIST_SEQ = I.SEQ
+		WHERE A.ARTIST_NAME LIKE #{artist};
+		
+		
+		</if>
+	</select>
+	
+	<select id="getMusicList" resultType="map" parameterType="map">
+		  
+				<if test="#{id} == null">
+				SELECT 
+				M.MUSIC_SEQ,
+				M.MUSIC_TITLE,
+				A.ARTIST_NAME,
+				A.ARTIST_SEQ
+				FROM MUSIC AS M
+				JOIN ARTIST AS A
+				ON M.ARTIST_SEQ = A.ARTIST_SEQ
+				WHERE M.ARTIST_SEQ LIKE #{artistSeq}
+				</if>
+				<if test="#{id} != null"> 
+			SELECT
+				M.MUSIC_SEQ,
+				M.ARTIST_SEQ,
+				M.MUSIC_TITLE,
+				M.GENRE_SEQ,
+				A.ARTIST_NAME,
+				U.TYPES
+				FROM MUSIC AS M
+				LEFT JOIN (
+				   SELECT
+					*
+					FROM(
+					SELECT
+					MAX(UD_SEQ) MAX_SEQ
+					FROM UPDOWN UD
+					WHERE MEMBER_ID LIKE #{id}
+					GROUP BY UD.SEQ_GROUP
+					ORDER BY UD_SEQ DESC
+					)A
+					JOIN(SELECT * FROM UPDOWN U) B
+					ON A.MAX_SEQ LIKE B.UD_SEQ
+					ORDER BY B.SEQ_GROUP) U
+					ON M.MUSIC_SEQ = U.SEQ_GROUP
+					LEFT JOIN ARTIST A
+					ON M.ARTIST_SEQ = A.ARTIST_SEQ
+					WHERE M.ARTIST_SEQ LIKE  #{artistSeq}
+					ORDER BY M.MUSIC_SEQ 
+				 	</if> 
+					
+	</select>
+	
+	<select id="getAlbumList"  resultType="map" parameterType="string">
+		 SELECT
+		     B.ALBUM_SEQ,
+			 B.ALBUM_TYPE,
+			 B.ALBUM_TITLE,
+			 B.RELEASE_DATE,
+			 B.AGENCY_NAME,
+			 B.ALBUM_GENRE,
+			 I.IMG_NAME, 
+			 I.EXT
+		FROM ALBUM AS B
+			 JOIN IMG AS I
+			 ON B.ALBUM_SEQ = I.SEQ
+		WHERE B.ALBUM_SEQ IN(
+			SELECT M.ALBUM_SEQ
+			FROM MUSIC M
+			WHERE M.ARTIST_SEQ LIKE #{artistSeq}
+		)
+	</select>
+	<select id="getMvList" resultType="map" parameterType="string">
+		SELECT
+		     M.MV_SEQ,
+			 M.MV_TITLE,
+			 M.RELEASE_DATE,
+			 M.MUSIC_SEQ,
+			 M.ytb
+		FROM MV AS M
+		WHERE M.MUSIC_SEQ IN(
+			SELECT MC.MUSIC_SEQ
+			FROM MUSIC MC
+			WHERE MC.ARTIST_SEQ LIKE #{artistSeq}
+			)
+	</select>
+	
+	 <insert id="musicRecord" parameterType="map">
+	  	INSERT INTO VIEW_RECORD
+	  	(MEMBER_ID, SEQ_GROUP, SG_ELEMENT)
+	  	VALUES
+	  	<foreach collection="musicList" item="i" separator=" , ">
+	  	(#{memberId},
+	  	 (SELECT MUSIC_SEQ FROM MUSIC WHERE MUSIC_SEQ LIKE #{i} ),
+	  	 'music')
+	  	</foreach>
+	  </insert>
+	
+	<select id="getPlayer" resultType="map" >
+		SELECT * FROM JT_VIEW_PLAYER
+			<where>
+				<if test= "musicSeq != null">
+					MUSIC_SEQ in (${musicSeq})
+				</if>
+				<if test= "albumSeq != null">
+					AND ALBUM_SEQ in (${albumSeq})
+				</if>
+	 		 </where>
+	</select>
+
+</mapper>
+

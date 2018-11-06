@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soundlab.web.album.AlbumMapper">
+	<select id="newAl_recent" resultType="java.util.Map">
+		SELECT
+		AB.*,
+		LI.SUMCNT,
+		(SELECT CONCAT(IMG_NAME, '.', EXT)
+		FROM IMG
+		WHERE SEQ LIKE AB.ALBUM_SEQ)IMG,
+		DATE_FORMAT(RELEASE_DATE,'%Y-%m-%d')AS REGI_DATE
+		FROM ALBUM AB
+		JOIN
+		(SELECT
+		M.ALBUM_SEQ,
+		SUM(IFNULL(U.CNT,0))
+		SUMCNT
+		FROM
+		MUSIC M
+		LEFT JOIN
+		(SELECT
+		*,
+		COUNT(*) CNT
+		FROM
+		UPDOWN
+		WHERE TYPES
+		LIKE 'u'
+		GROUP BY SEQ_GROUP, TYPES
+
+		) U
+		ON M.MUSIC_SEQ LIKE U.SEQ_GROUP
+		WHERE M.ALBUM_SEQ IS NOT NULL
+
+		GROUP BY M.ALBUM_SEQ) LI
+		ON AB.ALBUM_SEQ
+		LIKE LI.ALBUM_SEQ
+		ORDER BY RELEASE_DATE DESC LIMIT 6
+
+
+
+	</select>
+	<select id="newAl_like" resultType="java.util.Map">
+		SELECT
+		AB.*,
+		LI.SUMCNT,
+		(SELECT
+		CONCAT(IMG_NAME, '.', EXT)
+		FROM IMG
+		WHERE SEQ LIKE AB.ALBUM_SEQ)IMG,
+		DATE_FORMAT(RELEASE_DATE,'%Y-%m-%d')AS REGI_DATE
+		FROM ALBUM AB
+		JOIN
+		(SELECT
+		M.ALBUM_SEQ,
+		SUM(IFNULL(U.CNT,0))
+		SUMCNT
+		FROM
+		MUSIC M
+		LEFT JOIN
+		(SELECT
+		*,
+		COUNT(*) CNT
+		FROM
+		UPDOWN
+		WHERE TYPES
+		LIKE 'u'
+		GROUP BY SEQ_GROUP, TYPES
+
+		) U
+		ON M.MUSIC_SEQ LIKE U.SEQ_GROUP
+		WHERE M.ALBUM_SEQ IS NOT NULL
+
+		GROUP BY M.ALBUM_SEQ) LI
+		ON AB.ALBUM_SEQ
+		LIKE LI.ALBUM_SEQ
+		ORDER BY SUMCNT DESC LIMIT 6
+
+	</select>
+
+	<select id="al_comment" resultType="java.util.Map"
+		parameterType="com.soundlab.web.bean.comment">
+		INSERT INTO COMMENT(MEMBER_ID,SEQ_GROUP,MSG)
+		VALUES(#{memberId},'-1',#{msg})
+	</select>
+	<select id="viewComment" resultType="java.util.Map">
+		SELECT MEMBER_ID, MSG,
+		DATE_FORMAT(REGI_DATE,'%Y-%m-%d %H:%i:%s')AS REGI_DATE
+		FROM COMMENT
+		WHERE SEQ_GROUP LIKE '-1'
+		ORDER BY REGI_DATE DESC
+	</select>
+	<select id="carousel" resultType="java.util.Map"
+		parameterType="map">
+		SELECT
+		AB.*,
+		LI.SUMCNT,
+		(SELECT
+		CONCAT(IMG_NAME, '.', EXT)
+		FROM IMG
+		WHERE SEQ LIKE AB.ALBUM_SEQ)IMG,
+		DATE_FORMAT(RELEASE_DATE,'%Y-%m-%d')AS REGI_DATE
+		FROM ALBUM AB
+		JOIN
+		(SELECT
+		M.ALBUM_SEQ,
+		SUM(IFNULL(U.CNT,0))
+		SUMCNT
+		FROM
+		MUSIC M
+		LEFT JOIN
+		(SELECT
+		*,
+		COUNT(*) CNT
+		FROM
+		UPDOWN
+		WHERE TYPES
+		LIKE 'u'
+		GROUP BY SEQ_GROUP, TYPES
+
+		) U
+		ON M.MUSIC_SEQ LIKE U.SEQ_GROUP
+		WHERE M.ALBUM_SEQ IS NOT NULL
+
+		GROUP BY M.ALBUM_SEQ) LI
+		ON AB.ALBUM_SEQ
+		LIKE LI.ALBUM_SEQ
+		ORDER BY SUMCNT DESC LIMIT 10
+
+	</select>
+	<select id="getMusSeq" resultType="java.util.Map"
+		parameterType="map">
+		SELECT MUS.MUSIC_SEQ
+		FROM MUSIC MUS
+		JOIN ALBUM AL ON
+		MUS.ALBUM_SEQ LIKE AL.ALBUM_SEQ
+		WHERE AL.ALBUM_SEQ LIKE #{alSeq}
+	</select>
+
+</mapper>

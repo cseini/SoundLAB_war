@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.soundlab.web.dj.ArticleMapper">
+  	<resultMap type="map" id="atc">
+      <id property="articleSeq" column="ARTICLE_SEQ"/>
+      <result property="memberId" column="MEMBER_ID"/>
+      <result property="title" column="TITLE"/>
+      <result property="regidate" column="REGI_DATE"/>
+      <result property="viewCnt" column="VIEW_CNT"/>
+      <result property="imgName" column="IMG_NAME"/>
+      <result property="ext" column="EXT"/>
+      <result property="musicSeq" column="MUSIC_SEQ"/>
+      <result property="musicTitle" column="MUSIC_TITLE"/>
+      <result property="artistName" column="ARTIST_NAME"/>
+      <result property="genreSeq" column="GENRE_SEQ"/>
+      <result property="albumTitle" column="ALBUM_TITLE"/>
+      <result property="hashtag" column="HASHTAG"/>
+      <result property="hash" column="HASH" />
+      <result property="type" column="TYPES"/>
+    </resultMap>
+
+  <select id="get" resultMap="atc">
+	SELECT
+		DISTINCT D.ARTICLE_SEQ,
+		D.IMG_NAME,
+		D.EXT,
+		D.TITLE,
+		D.MEMBER_ID,
+		D.HASHTAG,
+		D.HASH
+	FROM (
+		SELECT
+			ROW_NUMBER() OVER(ORDER BY TITLE ASC) AS 'BNO',
+			A.*
+		FROM
+			ARTICLE A
+	)AR
+	JOIN SJ_DJ_VIEW D
+		ON AR.ARTICLE_SEQ LIKE D.ARTICLE_SEQ
+		<where>
+			<if test="t1 == null and t2 == null and t3 == null">
+				AR.BNO BETWEEN 1 AND 5
+			</if>
+			<if test="t1 != null">
+				AND D.HASHTAG LIKE #{t1}
+			</if>
+			<if test="t2 != null">
+				AND D.HASHTAG LIKE #{t2}
+			</if>
+			<if test="t3 != null">
+				AND D.HASHTAG LIKE #{t3}
+			</if>
+		</where>
+	ORDER BY AR.BNO;
+  </select>
+  
+  <select id="getDetail" resultMap="atc">
+	SELECT
+	SD.*
+	<if test="id != null">
+		,IFNULL(UD.TYPES,'-') TYPES
+	</if>
+	
+	FROM SJ_DJ_VIEW SD
+	<if test="id != null">
+	LEFT JOIN (
+	SELECT
+	*
+	FROM(
+	SELECT
+	MAX(UD_SEQ) MAX_SEQ
+	FROM UPDOWN UD
+	WHERE MEMBER_ID LIKE #{id}
+	GROUP BY UD.SEQ_GROUP
+	ORDER BY UD_SEQ DESC
+	)A
+	JOIN(SELECT * FROM UPDOWN U) B
+	ON A.MAX_SEQ LIKE B.UD_SEQ
+	ORDER BY B.SEQ_GROUP
+	) UD
+	ON SD.MUSIC_SEQ LIKE UD.SEQ_GROUP
+	</if>
+	WHERE ARTICLE_SEQ LIKE #{seq}
+  </select>
+  <insert id="putHashView">
+ 	INSERT INTO VIEW_RECORD (MEMBER_ID, SEQ_GROUP, SG_ELEMENT)
+ 	VALUES
+ 	(#{id},#{t1},'hash'),
+ 	(#{id},#{t2},'hash'),
+ 	(#{id},#{t3},'hash')
+  </insert>
+  </mapper>

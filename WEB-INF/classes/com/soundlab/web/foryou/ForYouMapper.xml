@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.soundlab.web.foryou.ForYouMapper">
+  <resultMap type="map" id="fy">
+  	<result property="msRankA" column="MS_RANK_A"/>
+  	<result property="msSeqA" column="MS_SEQ_A"/>
+  	<result property="msTitleA" column="MS_TITLE_A"/>
+  	<result property="msGenreA" column="MS_GENRE_A"/>
+  	<result property="msGenreSeqA" column="MS_GENRE_SEQ_A"/>
+  	<result property="msArtistA" column="MS_ARTIST_A"/>
+  	<result property="msArtistNameA" column="MS_ARTIST_NAME_A"/>
+  	<result property="msAlbumA" column="MS_ALBUM_A"/>
+  	<result property="msAlbumTitleA" column="MS_ALBUM_TITLE_A"/>
+  	<result property="msRankB" column="MS_RANK_B"/>
+  	<result property="msSeqB" column="MS_SEQ_B"/>
+  	<result property="msTitleB" column="MS_TITLE_B"/>
+  	<result property="msGenreB" column="MS_GENRE_B"/>
+  	<result property="msGenreSeqB" column="MS_GENRE_SEQ_B"/>
+  	<result property="msArtistB" column="MS_ARTIST_B"/>
+  	<result property="msArtistNameB" column="MS_ARTIST_NAME_B"/>
+  	<result property="msAlbumB" column="MS_ALBUM_B"/>
+  	<result property="msAlbumTitleB" column="MS_ALBUM_TITLE_B"/>
+  	<result property="alRank" column="AL_RANK"/>
+  	<result property="alArtist" column="AL_ARTIST"/>
+  	<result property="alArtistName" column="AL_ARTIST_NAME"/>
+  	<result property="alSeq" column="AL_SEQ"/>
+  	<result property="alTitle" column="AL_TITLE"/>
+  	<result property="alImgName" column="AL_IMG_NAME"/>
+  	<result property="alImgExt" column="AL_IMG_EXT"/>
+  	<result property="atRank" column="AT_RANK"/>
+  	<result property="atArtistSeq" column="AT_ARTIST_SEQ"/>
+  	<result property="atArtistName" column="AT_ARTIST_NAME"/>
+  	<result property="atImgName" column="AT_IMG_NAME"/>
+  	<result property="atImgExt" column="AT_IMG_EXT"/>
+  	<result property="mSeq" column="MSEQ"/>
+  	<result property="musicSeq" column="MUSIC_SEQ"/>
+  	<result property="musicTitle" column="MUSIC_TITLE"/>
+  	<result property="artistName" column="ARTIST_NAME"/>
+  	<result property="albumSeq" column="ALBUM_SEQ"/>
+  	<result property="albumTitle" column="ALBUM_TITLE"/>
+  	<result property="type" column="TYPES"/>
+  	
+  	<result property="genreSeq" column="GENRE_SEQ"/>
+  </resultMap>
+  <select id="getForYou" resultMap="fy">
+SELECT
+*
+FROM SJ_FORYOU_V SJ 
+RIGHT JOIN
+(SELECT
+IFNULL(A.MSEQ,'0') AS MSEQ,
+A.MUSIC_SEQ,
+A.MUSIC_TITLE,
+A.ARTIST_NAME,
+A.GENRE_SEQ,
+A.ALBUM_SEQ,
+A.ALBUM_TITLE,
+UD.TYPES,
+SR.NUM
+FROM
+(SELECT
+ROW_NUMBER() OVER(ORDER BY M.MUSIC_SEQ) AS MSEQ,
+M.MUSIC_SEQ,
+M.MUSIC_TITLE,
+M.GENRE_SEQ,
+AL.ARTIST_NAME,
+M.ALBUM_SEQ,
+AL.ALBUM_TITLE
+FROM
+MUSIC M
+JOIN ALBUM AL
+ON M.ALBUM_SEQ LIKE AL.ALBUM_SEQ
+WHERE M.ALBUM_SEQ LIKE (
+SELECT S.AL_SEQ FROM SJ_FORYOU_V S WHERE S.AL_RANK LIKE 1
+))A
+RIGHT JOIN SJ_EMPTY_SIX SR
+ON A.MSEQ LIKE SR.NUM
+LEFT JOIN (
+SELECT
+*
+FROM(
+SELECT
+MAX(UD_SEQ) MAX_SEQ
+FROM UPDOWN UD
+WHERE MEMBER_ID LIKE 'sound'
+GROUP BY UD.SEQ_GROUP
+ORDER BY UD_SEQ DESC
+)A
+JOIN(SELECT * FROM UPDOWN U) B
+ON A.MAX_SEQ LIKE B.UD_SEQ
+ORDER BY B.SEQ_GROUP
+) UD
+ON A.MUSIC_SEQ LIKE UD.SEQ_GROUP
+)DT
+ON DT.NUM LIKE SJ.A_NUM
+ORDER BY ISNULL(SJ.A_NUM) ASC, SJ.A_NUM
+  </select>
+  <select id="getAlbumDetail" resultMap="fy">
+SELECT
+MS.MUSIC_SEQ,
+MS.MUSIC_TITLE,
+MS.GENRE_SEQ,
+MS.ARTIST_SEQ,
+AB.ARTIST_NAME,
+AB.ALBUM_SEQ,
+AB.ALBUM_TITLE,
+UD.TYPES
+FROM MUSIC MS 
+JOIN ALBUM AB
+ON MS.ALBUM_SEQ = AB.ALBUM_SEQ
+LEFT JOIN (
+SELECT
+*
+FROM(
+SELECT
+MAX(UD_SEQ) MAX_SEQ
+FROM UPDOWN UD
+WHERE MEMBER_ID LIKE 'sound'
+GROUP BY UD.SEQ_GROUP
+ORDER BY UD_SEQ DESC
+)A
+JOIN(SELECT * FROM UPDOWN U) B
+ON A.MAX_SEQ LIKE B.UD_SEQ
+ORDER BY B.SEQ_GROUP
+)UD
+ON MS.MUSIC_SEQ LIKE UD.SEQ_GROUP
+WHERE MS.ALBUM_SEQ LIKE #{p}
+ORDER BY MS.MUSIC_SEQ
+  </select>
+  
+  <insert id="putMusicUp">
+ 	INSERT INTO UPDOWN ( MEMBER_ID , SEQ_GROUP , SG_ELEMENT , TYPES )
+ 	VALUES ('sound',#{p},'music','u')
+  </insert>
+  <insert id="putMusicDown">
+  	INSERT INTO UPDOWN ( MEMBER_ID , SEQ_GROUP , SG_ELEMENT , TYPES )
+ 	VALUES ('sound',#{p},'music','d')
+  </insert>
+  <insert id="putGenreUp">
+ 	INSERT INTO UPDOWN ( MEMBER_ID , SEQ_GROUP , SG_ELEMENT , TYPES )
+ 	VALUES ('sound',#{p},'genre','u')
+  </insert>
+  <insert id="putArtistUp">
+  	INSERT INTO UPDOWN ( MEMBER_ID , SEQ_GROUP , SG_ELEMENT , TYPES )
+ 	VALUES ('sound',#{p},'artist','u')
+  </insert>
+  <insert id="putArtistDown">
+  	INSERT INTO UPDOWN ( MEMBER_ID , SEQ_GROUP , SG_ELEMENT , TYPES )
+ 	VALUES ('sound',#{p},'artist','d')
+  </insert>
+  
+  <delete id="delDown">
+  	DELETE FROM UPDOWN 
+  	WHERE MEMBER_ID LIKE 'sound'
+  	AND SEQ_GROUP LIKE #{p}
+  	AND TYPES LIKE 'd'
+  </delete>
+  <delete id="delUp">
+	DELETE FROM UPDOWN
+	WHERE MEMBER_ID LIKE 'sound'
+	AND SEQ_GROUP LIKE #{p}
+	AND TYPES LIKE 'u'
+  </delete>
+  <delete id="delGenreUp">
+  	DELETE FROM UPDOWN
+  	WHERE UD_SEQ LIKE (
+	  	SELECT MIN(UD_SEQ)
+		FROM UPDOWN 
+		WHERE MEMBER_ID LIKE 'sound' 
+		AND SEQ_GROUP LIKE #{p}
+		AND TYPES LIKE 'u'
+		GROUP BY SEQ_GROUP
+		)
+  </delete>
+
+  </mapper>

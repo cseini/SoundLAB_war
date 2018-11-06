@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soundlab.web.mbr.MemberMapper">
+	<resultMap type="map" id="mbr">
+		<id property="memberId" column="MEMBER_ID"/>
+		<result property="pass" column="PASS"/>
+		<result property="name" column="NAME"/>
+		<result property="ssn" column="BIRTH"/>
+		<result property="phone" column="PHONE"/>
+		<result property="nick" column="NICK"/>
+		<result property="sex" column="SEX"/>
+		<result property="email" column="E_MAIL"/>
+	</resultMap>
+	
+	 <select id="kakao" resultType="int">
+	    SELECT COUNT(*) FROM KAKAO WHERE KAKAO_ID LIKE #{KAKAO_ID} AND KAKAO_PASS LIKE #{KAKAO_PASS}
+	  </select>
+	
+	  <select id="get" resultMap="mbr">
+	    SELECT MEMBER_ID, PASS, NAME, BIRTH, PHONE, NICK, SEX, E_MAIL FROM MEMBER 
+	    <where>
+	    	<if test=" memberId != null and memberId != '' ">
+	    		MEMBER_ID LIKE #{memberId}
+	    	</if>
+	    	<if test=" pass != null and pass != '' ">
+	    		AND PASS LIKE #{pass}
+	    	</if>
+	    </where>
+	  </select>
+	  
+	  <select id="getKakao" resultType="string">
+	    SELECT MEMBER_ID FROM KAKAO WHERE KAKAO_ID LIKE #{KAKAO_ID} AND KAKAO_PASS LIKE #{KAKAO_PASS}
+	  </select>
+	  
+	  <select id="count" resultType="int">
+	    SELECT COUNT(*) FROM MEMBER 
+	    <where>
+	    	<if test=" memberId != null and memberId != '' ">
+	    		MEMBER_ID LIKE #{memberId}
+	    	</if>
+	    	<if test=" pass != null and pass != '' ">
+	    		AND PASS LIKE #{pass}
+	    	</if>
+	    </where>
+	  </select>
+	  <insert id="post">
+	  	INSERT INTO MEMBER
+	  	(MEMBER_ID, PASS, NAME, BIRTH, PHONE, NICK, SEX, E_MAIL)
+	  	VALUES
+	  	(#{memberId},#{pass},#{name},#{ssn},#{phone},#{nick},#{sex},#{email})
+	  </insert>
+	  <insert id="postKakao">
+	  	INSERT INTO KAKAO
+	  	(MEMBER_ID, KAKAO_ID, KAKAO_PASS)
+	  	VALUES
+	  	(#{memberId},#{KAKAO_ID},#{KAKAO_PASS})
+	  </insert>
+	  <insert id="upGenre" parameterType="map">
+	  	INSERT INTO UPDOWN
+	  	(MEMBER_ID, SEQ_GROUP, SG_ELEMENT, TYPES)
+	  	VALUES
+	  	<foreach collection="genres" item="i" separator=" , ">
+	  	(#{memberId},
+	  	 (SELECT GENRE_SEQ FROM MUSIC_GENRE WHERE GENRE LIKE #{i} ),
+	  	 'genre','u')
+	  	</foreach>
+	  </insert>
+	  <insert id="upArtist" parameterType="map">
+	  	INSERT INTO UPDOWN
+	  	(MEMBER_ID, SEQ_GROUP, SG_ELEMENT, TYPES)
+	  	VALUES
+	  	<foreach collection="artists" item="i" separator=" , ">
+	  	(#{memberId},
+	  	 (SELECT ARTIST_SEQ FROM ARTIST WHERE ARTIST_NAME LIKE #{i} ),
+	  	 'artist','u')
+	  	</foreach>
+	  </insert>
+	  <update id="update">
+	  	UPDATE MEMBER
+	  	SET PASS=#{pass}, PHONE=#{phone}, E_MAIL=#{email}
+	  	WHERE MEMBER_ID LIKE #{memberId}
+	  </update>
+	  <delete id="delete">
+	    DELETE FROM MEMBER
+	    WHERE MEMBER_ID LIKE #{memberId}
+	  </delete>
+	  <insert id="loginRecord">
+	  	INSERT INTO LOGIN_RECORD
+	  	(MEMBER_ID,SEX)
+	  	VALUES(#{memberId},(SELECT SEX FROM MEMBER WHERE MEMBER_ID LIKE #{memberId}))
+	  </insert>
+	  
+</mapper>

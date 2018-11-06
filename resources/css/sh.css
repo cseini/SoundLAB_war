@@ -1,0 +1,678 @@
+/***************************************
+PROJECT :: SoundLAB
+Created: 2018.10.??
+****************************************/
+
+/*
+font-family: 'Roboto Slab', serif;
+*/
+@import url(https://fonts.googleapis.com/css?family=Roboto+Slab:400,700,300,100);
+/*
+font-family: 'Lato', sans-serif;
+*/
+@import url(https://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic);
+/*
+font-family: 'Raleway', sans-serif;
+*/
+@import url(https://fonts.googleapis.com/css?family=Raleway:400,100,200,300,500,600,700,800,900);
+/*
+font-family: 'Open Sans', sans-serif;
+*/
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700italic,700,800,800italic);
+@import url(https://fonts.googleapis.com/css?family=Cute+Font);
+@import url('https://fonts.googleapis.com/css?family=Do+Hyeon');
+/*
+font-family: 'Roboto', sans-serif;
+font-family: 'Cute Font', cursive;
+font-family: 'Do Hyeon', sans-serif;
+*/
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic);
+@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css);
+/*header*/
+/* nav에 가려지는 부분 */
+.header {
+     /* margin-top:16rem; */
+}
+/* height: 35px!important; */
+.navbar-nav > li > a,
+.navbar-collapse.collapse {padding-top:0 !important; padding-bottom:5px !important; }
+ /* 로그인,회원가입,차트,... 글씨 컬러 */
+.navbar-default .navbar-nav>li>a {
+     color: #1c3120;
+}
+/* nav 배치 */
+.navbar-collapse {
+    float: right !important;
+    /* display: inline-block;  */
+    /* vertical-align: middle; */
+    /* white-space: nowrap;  */
+}
+
+
+.logoImg {
+	margin: 2rem 0rem 0rem 2rem;
+	width: 8rem;
+	height: 8rem;
+	cursor: pointer;
+}
+
+
+
+#contents {
+	padding-top: 18rem;
+}
+
+#userBox {
+     float: none !important;
+     margin: 0rem 2rem 0rem 1rem;
+}
+#serviceBox {
+     float: none !important;
+}
+#logoImg {
+     float: none !important;
+}
+#searchBox {
+     text-align:center;
+     height: 8rem;
+}
+/*--- nav 배치 ----*/
+.navbar-header {
+     
+     /* padding-top: 0px;  */
+}
+.loginBtn,
+.joinBtn {
+    color: #4DA91C;
+    font-size: 1.9rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-family: 'Do Hyeon', sans-serif;
+    margin: 1rem 1rem 0rem 0rem;
+}
+.chartBtn,
+.albumBtn,
+.djBtn,
+.forBtn {
+    color: #1c3120;
+    font-size: 2.6rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-family: 'Do Hyeon', sans-serif;
+    margin: 0rem 1rem 0rem 0rem;
+}
+/* .searchBox {background: #7BA7AB;} */
+.searchBox:after {content:""; clear:both; display:table}
+.searchBox {
+  position: relative;
+  width: auto;
+  float: right;
+  text-align:center;
+}
+.searchBox input {
+  margin-top: 4rem;
+  /* width: 270px; */
+  width: 36rem;
+  height: 4.5rem;
+  padding-left: 1.5rem;
+  border-radius: 4.2rem;
+  border: 0.2rem solid #324b4e; /* 검색창테두리 */
+  background: #F9F0DA;
+  outline: none;
+  position: relative;
+  transition: .2s linear;
+}
+#searchInput:focus {
+  /* width: 290px; */
+  width: 40rem;
+}
+.searchBox button {
+  margin-top: 4rem;
+  width: 4.5rem;
+  height: 4.5rem;
+  background: none;
+  border: none;
+  position: absolute;
+  top: -0.2rem;
+  right: 0rem;   /* 돋보기 위치 */
+}
+.searchBox button:before{
+  content: "\f002";
+  font-family: FontAwesome;
+  color: #324b4e;
+}
+/* 네비폰트관련 *//* 네비밑줄 */
+.header_menu ul.main_menu li:after {
+    content: '';
+    display: block;
+    margin: auto;
+    height: 0.3rem;
+    width: 0rem;
+    background: transparent;
+    transition: width .5s ease, background-color .5s ease;
+}
+.header_menu ul.main_menu li:hover:after,
+.header_menu ul.main_menu li.active:after {
+    width: 12.2rem;
+    background: #f6b352;
+}
+/*-- 네비밑줄 --*/
+/*Back to Top*/
+ #back-to-top {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    width: 3.2rem;
+    height: 3.2rem;
+    text-align: center;
+    line-height: 3rem;
+    background: rgba(84, 225, 0, 0.18);
+    color: #ffffff;
+    cursor: pointer;
+    border: 0;
+    text-decoration: none;
+    transition: all 0.5s ease;
+    opacity: 0;
+    display: none;
+    background: #f6b352;
+}
+#back-to-top:hover {
+    color: #fff;
+    border-radius: 50%;
+}
+#back-to-top.show { opacity: 1; }
+.affix {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 9999;
+    background: #fff;
+    padding-top:0rem;
+}
+
+
+/* 로그인화면 */
+.loginSec {
+	border: 1px solid #ccc;
+	border-top: 3px solid #f6b352;
+	height: 91rem;
+	width: 100%;
+	font-family: 'Do Hyeon', sans-serif;
+}
+
+.loginLogo {
+	height: 16rem;
+	margin: 0rem 3rem 3rem 11rem;
+	cursor: pointer;
+}
+.loginLogo2 {
+	height: 16rem;
+	margin: 0rem 3rem 3rem 11rem;
+}
+
+
+.loginBox {
+	margin: 4rem 0 20rem 0;
+	padding: 0rem 2rem 0rem 2rem;
+}
+.logoForm {
+	padding-left: 3rem; 
+}
+.loginForm {
+    width: 450px;
+    border: 2px solid #ccc;
+    padding: 2rem 2rem 0rem 2rem;
+}
+.loginInput {
+	padding-left: 1rem;
+	height: 5rem;
+	width: 40rem;
+	font-size: 2.1rem;
+}
+.btn-loginConf {
+	margin: 0rem 0rem 4rem 1.5rem;
+	height: 5rem;
+	width: 16rem;
+	font-size: 2.5rem;
+	background-color: #f68657;
+    background-position: 0 -15px;
+}
+
+.btn-loginConf:hover {
+	margin: 0rem 0rem 4rem 1.5rem;
+	height: 5rem;
+	width: 16rem;
+	font-size: 2.5rem;
+	background-color: #f6b352;
+    background-position: 0 -15px;
+}
+
+.btn-loginConf2 {
+	margin: 0rem 0rem 4rem 1.5rem;
+	height: 5rem;
+	width: 35rem;
+	font-size: 2.5rem;
+	background-color: #f68657;
+    background-position: 0 -15px;
+}
+.btn-loginConf2:hover {
+	margin: 0rem 0rem 4rem 1.5rem;
+	height: 5rem;
+	width: 35rem;
+	font-size: 2.5rem;
+	background-color: #f6b352;
+    background-position: 0 -15px;
+}
+
+.kakaoBtn {
+	margin-top: 1rem;
+	height: 5rem;
+	width: 40rem;
+	font-size: 2.5rem;
+}
+.saveID { font-size : 2rem; }
+.findJoin {	margin-left: 12rem; color: #f68657;}
+.findJoinBtn {
+	margin-left: 2.5rem; 
+	height: 5rem;
+	width: 20rem;
+	font-size: 2.1rem;
+	color: #f68657;
+}
+
+.findJoinBtn:hover {
+	margin-left: 2.5rem; 
+	height: 5rem;
+	width: 20rem;
+	font-size: 2.1rem;
+	color: #f6b352;
+}
+.loginInst {
+	font-size: 2.8rem;
+    margin: 0rem 2rem 3rem 4rem;
+}
+
+
+
+/*--로그인화면 --*/
+
+/* 조인화면 */
+.joinSec {
+	min-width: 640px;
+	border: 1px solid #ccc;
+	border-top: 3px solid #f6b352;
+	width: 100%;
+	font-family: 'Do Hyeon', sans-serif;
+}
+.joinBox {
+	margin: 4rem 0rem 5rem 0rem; 
+	padding: 0rem 2rem 0rem 2rem;
+	font-size: 2.3rem;	
+}
+.joinForm {
+	width: 550px;
+    border: 2px solid #ccc;
+    padding: 2rem 1.5rem 5rem 1.5rem;
+}
+
+.joinLogo {
+	height: 16rem;
+	margin: 0rem 3rem 3rem 16rem;
+	cursor: pointer;
+}
+
+.joinInput {
+	margin: 1rem 0rem 1rem 3rem;
+	padding-left: 1rem;
+	margin-bottom: 1rem;
+	height: 5rem;
+	width: 40rem;
+	font-size: 2.3rem;
+}
+.joinId {
+	margin-left: 3.5rem;
+	width: 25rem;
+}
+.btn-dupleCheck {
+	height: 5rem;
+	width: 14rem;
+	font-size: 2.5rem;
+	margin-left: 1rem;
+	background-color: #f68657;
+    background-position: 0 -15px;
+}
+
+.btn-dupleCheck:hover {
+	height: 5rem;
+	width: 14rem;
+	font-size: 2.5rem;
+	margin-left: 1rem;
+	background-color: #f6b352;
+    background-position: 0 -15px;
+}
+
+
+.joinPass {	margin-left: 1.7rem; }
+.joinPass2 { margin-left: 8.7rem; }
+.joinName {	margin-left: 5.2rem; }
+.joinNick {	margin-left: 3.5rem; }
+.joinSsn { margin-left: 1.5rem; }
+.joinMan { margin-left: 5rem; }
+.joinWoman {
+	margin-left: 6rem;
+	margin-right: 26rem;
+}
+.joinMail {	
+	margin-left: 3.5rem;
+	width: 20rem;
+	height: 5rem;		
+}
+.mailDomain {
+	height: 5rem;
+}
+.joinPhone { margin-left: 3.6rem; }
+.selectGenre{ margin-left: 10rem; }
+.selectArtist{ margin-left: 10rem; }
+.genre { margin-right: 3rem; }
+.artist { margin-right: 3rem; }
+.btn-joinConf {
+	margin: 4rem 1rem 0rem 15rem;
+	height: 5rem;
+	width: 20rem;
+	font-size: 2.7rem;
+	background-color: #f68657;
+    background-position: 0 -15px;
+}
+.btn-joinConf:hover {
+	margin: 4rem 1rem 0rem 15rem;
+	height: 5rem;
+	width: 20rem;
+	font-size: 2.7rem;
+	background-color: #f6b352;
+    background-position: 0 -15px;
+}
+.inst1 { margin-right: 38rem; }
+.inst2 { margin-right: 32rem; }
+.inst3 { margin-right: 29.5rem; }
+
+/*--조인화면 --*/
+
+/* 배너 */
+/* #bannerBox{
+	width: 100%;
+	height: 100%; 
+} */
+#bannerImg>.item>img {
+     display: block; 
+     width:100%;
+     height: 48rem; 
+     
+}
+
+
+
+
+html, body, main {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+#main_carousel {
+  position: relative;
+  height: 400px;
+  top: 50%;
+  transform: translateY(-50%);
+  overflow: hidden;
+}
+#main_carousel div {
+  position: absolute;
+  transition: transform 1s, left 1s, opacity 1s, z-index 0s;
+  opacity: 1;
+}
+#main_carousel div img {
+  width: 400px;
+  transition: width 1s;
+}
+#main_carousel div.hideLeft {
+  left: 0%;
+  opacity: 0;
+  transform: translateY(50%) translateX(-50%);
+}
+#main_carousel div.hideLeft img {
+  width: 200px;
+}
+#main_carousel div.hideRight {
+  left: 100%;
+  opacity: 0;
+  transform: translateY(50%) translateX(-50%);
+}
+#main_carousel div.hideRight img {
+  width: 200px;
+}
+#main_carousel div.prev {
+  z-index: 5;
+  left: 30%;
+  transform: translateY(50px) translateX(-50%);
+}
+#main_carousel div.prev img {
+  width: 300px;
+}
+#main_carousel div.prevLeftSecond {
+  z-index: 4;
+  left: 15%;
+  transform: translateY(50%) translateX(-50%);
+  opacity: 0.7;
+}
+#main_carousel div.prevLeftSecond img {
+  width: 200px;
+}
+#main_carousel div.selected {
+  z-index: 10;
+  left: 50%;
+  transform: translateY(0px) translateX(-50%);
+}
+#main_carousel div.next {
+  z-index: 5;
+  left: 70%;
+  transform: translateY(50px) translateX(-50%);
+}
+#main_carousel div.next img {
+  width: 300px;
+}
+#main_carousel div.nextRightSecond {
+  z-index: 4;
+  left: 85%;
+  transform: translateY(50%) translateX(-50%);
+  opacity: 0.7;
+}
+#main_carousel div.nextRightSecond img {
+  width: 200px;
+}
+.buttons {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: -180px 0px 0px 0px;
+  font-size: 20px;
+  color: #F68657;
+  
+}
+
+#prev{
+	border-radius: 50%;
+    background-color: white;
+    border: none;
+}
+
+#next{
+	border-radius: 50%;
+    background-color: white;
+    border: none;
+}
+/*-- 배너 --*/
+
+#mainContents {
+	margin : -90px 0px 0px 0px;
+	padding : 0px 0px 0px 0px;
+}
+
+.topFive {
+	margin: 30px 0px 0px 60px;
+}
+
+
+.sh-album-img {
+	display: none;
+	float: left;
+	margin: 0 13px 0 3px;
+}
+
+.sh-img-hover {
+	display: inline-block;
+	float: left;
+	margin: 0 13px 0 3px;
+	 width: 48px;
+    height: 48px;
+}
+.sh-cover {
+    cursor: pointer;
+}
+.sh-music-upbtn {
+	width: 100px;
+}
+#main-chart{
+   font-size: 30px;
+   cursor: pointer;
+   text-decoration: none;
+   font-weight: 10;
+}
+
+.sh-title {
+	text-decoration:none !important;
+	cursor: text;
+	float: left;
+    margin: 4px 25px 0px 0px;
+    width: 44% !important;
+    max-width: 44%;
+    color: #0e0404cf;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+	
+}
+.sh-artist {
+	float: left;
+    margin: 4px 0px 4px 0px;
+    width: 40% !important;
+    max-width: 40%;
+    color: #8b8b8b;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sh-hover {
+	overflow: hidden;
+	height:0;
+	font-size:0;
+	line-height:0;
+	border-bottom:0;
+	text-indent: 9999px;
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
+}
+
+
+.sh-list {
+    border: 0.002rem solid #383a3f17;
+    border-left: 0rem;
+    border-right: 0rem; 
+}
+.sh-listbox{
+	border-top: 1rem solid #f6b352;
+    border-left: 0rem;
+    border-right: 0rem;
+    border-bottom: 0.3rem solid #383a3f17;
+    width: 450px;
+    height: 200px;
+}
+
+.sh-chart-rank {
+	font-size: 1.5rem;
+    font-weight: bold;
+    color: #0e0404ad;
+    text-decoration: none;
+    padding: 0px 0px 0px 15px;
+}
+.sh-music-info {
+	color: #8b8b8b;
+    text-decoration: none;
+    padding: 0px 0px 0px 20px;
+}
+.sh-music-player a i {
+	color: #0e0404cf;
+    text-decoration: none;
+    padding : 0px 0px 0px 3px;
+}
+/* .sh-music-upbtn a i {
+	color: #2b272757;
+    text-decoration: none;
+    padding : 0px 0px 0px 3px;
+}
+.sh-music-downbtn a i {
+	color: #2b272757;
+    text-decoration: none;
+    padding : 0px 0px 0px 5px;
+} */
+.sh-up {
+	cursor: pointer;
+	color: #2b272757;
+    text-decoration: none;
+}
+.sh-down {
+	cursor: pointer;
+	color: #2b272757;
+    text-decoration: none;
+    padding: 0px 0px 0px 20px;
+}
+
+.sh-music-upbtn i.active {
+	color: #f68657;
+    text-decoration: none;
+}
+/* 해시태그 */
+.label-background-strong {
+  fill: white;
+  fill-opacity: .8;
+}
+
+#wolfstar-container {
+  cursor: default;
+}
+
+svg text{
+  font-family: Helvetica, sans-serif;
+  font-size: 14px;
+}
+/*-- 해시태그 --*/
+
+[data-tooltip-text]:hover {
+	position: relative;
+}
+
+[data-tooltip-text]:hover:after {
+	content: attr(data-tooltip-text);
+    position: absolute;
+	/* bottom: 100%; */
+	bottom: -32px;
+	left: 0;
+    
+    background-color:  #ffffff;
+	color: #000000;
+	font-size: 18px;
+
+	z-index: 9999;
+}
